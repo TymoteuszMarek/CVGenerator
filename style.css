@@ -1,0 +1,15 @@
+nav{
+    width: 100%;
+}
+main{
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    margin: auto;
+}
+#Name{
+    width: 30%;
+}
+#LastName{
+    width: 30%;
+}
