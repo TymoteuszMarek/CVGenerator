@@ -4,18 +4,19 @@ import Rect from "./Rect";
 
 export default class PDFWrite
 {
+    /**@type {string} */
+    static defaultFont = "Helvetica";
+    /**@type {string} */
+    static defaultFontColor = "black";
+    /**@type {string} */
+    static defaultFontStyle = "black";
+    /**@type {number} */
+    static defaultFontMargin = 3;
+    /**@type {number} */
+    static defaultFontSize = 12;
+
     /**@type {jsPDF} */
     doc;
-    /**@type {string} */
-    font = "Helvetica";
-    /**@type {number} */
-    fontSize = 12;
-    /**@type {string} */
-    fontStyle = "";
-    /**@type {string} */
-    textColor = "black";
-    /**@type {number} */
-    fontMargin = 3;
 
     /**
      * @param {jsPDF} document 
@@ -28,88 +29,101 @@ export default class PDFWrite
      * Writes text into the document
      * @param {string} text
      * @param {Rect} rect used for structuring the content of the document
+     * @param {number} fontSize
+     * @param {string} fontColor
+     * @param {string} font
+     * @param {string} fontStyle
+     * @param {number} fontMargin
      */
-    Write(text, rect){
-        let textLines = this.doc.setFont(this.font, this.fontStyle).setFontSize(this.fontSize).splitTextToSize(text, rect.getWritingWidth());
-        this.doc.setTextColor(this.textColor);
-        console.log(rect);
+    Write(text, rect, fontSize = PDFWrite.defaultFontSize, fontColor = PDFWrite.defaultFontColor, font = PDFWrite.defaultFont, fontStyle = PDFWrite.defaultFontStyle, fontMargin = PDFWrite.defaultFontMargin){
+        let textLines = this.doc.setFont(font, fontStyle).setFontSize(fontSize).splitTextToSize(text, rect.getWritingWidth());
+        this.doc.setTextColor(fontColor);
+
         textLines.forEach(line => {
-            this.doc.text(line, rect.getWritingX(), 20);
-            console.log(rect.getWritingY());
-            rect.linesHeight += this.fontSize * 0.25 + this.fontMargin;
+            console.log(line);
+            console.log(rect.getWritingX());
+            console.log(rect.getWritingY());// + (fontSize * 25.4 / 96));
+            this.doc.text(line, rect.getWritingX(), rect.getWritingY());// + (fontSize * 25.4 / 96));
+            rect.linesHeight += fontSize * 0.25 + fontMargin;
         });
     }
     /**
      * Writes text into the document
      * @param {string} text 
      * @param {Rect} rect used for structuring the content of the document 
+     * @param {string} fontColor
+     * @param {string} font
+     * @param {number} fontMargin
      */
-    WriteH1(text, rect){
+    WriteH1(text, rect, fontColor = PDFWrite.defaultFontColor, font = PDFWrite.defaultFont, fontMargin = PDFWrite.defaultFontMargin){
         const fontSize = 48;
 
-        this.fontSize = fontSize;
-        this.fontStyle = "bold";
-        this.Write(text, rect)
+        this.Write(text, rect, fontSize, fontColor, font, "bold", fontMargin);
     }
     /**
      * Writes text into the document
      * @param {string} text 
      * @param {Rect} rect used for structuring the content of the document 
+     * @param {string} fontColor
+     * @param {string} font
+     * @param {number} fontMargin
      */
-    WriteH2(text, rect){
+    WriteH2(text, rect, fontColor = PDFWrite.defaultFontColor, font = PDFWrite.defaultFont, fontMargin = PDFWrite.defaultFontMargin){
         const fontSize = 42;
 
-        this.fontSize = fontSize;
-        this.fontStyle = "bold";
-        this.Write(text, rect)
+        this.Write(text, rect, fontSize, fontColor, font, "bold", fontMargin);
     }
     /**
      * Writes text into the document
      * @param {string} text 
      * @param {Rect} rect used for structuring the content of the document 
+     * @param {string} fontColor
+     * @param {string} font
+     * @param {number} fontMargin
      */
-    WriteH3(text, rect){
+    WriteH3(text, rect, fontColor = PDFWrite.defaultFontColor, font = PDFWrite.defaultFont, fontMargin = PDFWrite.defaultFontMargin){
         const fontSize = 34;
 
-        this.fontSize = fontSize;
-        this.fontStyle = "bold";
-        this.Write(text, rect)
+        this.Write(text, rect, fontSize, fontColor, font, "bold", fontMargin);
     }
     /**
      * Writes text into the document
      * @param {string} text 
      * @param {Rect} rect used for structuring the content of the document 
+     * @param {string} fontColor
+     * @param {string} font
+     * @param {number} fontMargin
      */
-    WriteH4(text, rect){
+    WriteH4(text, rect, fontColor = PDFWrite.defaultFontColor, font = PDFWrite.defaultFont, fontMargin = PDFWrite.defaultFontMargin){
         const fontSize = 26;
 
-        this.fontSize = fontSize;
-        this.fontStyle = "bold";
-        this.Write(text, rect)
+        this.Write(text, rect, fontSize, fontColor, font, "bold", fontMargin);
     }
     /**
      * Writes text into the document
      * @param {string} text 
      * @param {Rect} rect used for structuring the content of the document 
+     * @param {string} fontColor
+     * @param {string} font
+     * @param {number} fontMargin
      */
-    WriteH5(text, rect){
+    WriteH5(text, rect, fontColor = PDFWrite.defaultFontColor, font = PDFWrite.defaultFont, fontMargin = PDFWrite.defaultFontMargin){
         const fontSize = 18;
 
-        this.fontSize = fontSize;
-        this.fontStyle = "bold";
-        this.Write(text, rect)
+        this.Write(text, rect, fontSize, fontColor, font, "bold", fontMargin);
     }
     /**
      * Writes text into the document
      * @param {string} text 
      * @param {Rect} rect used for structuring the content of the document 
+     * @param {string} fontColor
+     * @param {string} font
+     * @param {number} fontMargin
      */
-    WriteH6(text, rect){
+    WriteH6(text, rect, fontColor = PDFWrite.defaultFontColor, font = PDFWrite.defaultFont, fontMargin = PDFWrite.defaultFontMargin){
         const fontSize = 12;
 
-        this.fontSize = fontSize;
-        this.fontStyle = "bold";
-        this.Write(text, rect)
+        this.Write(text, rect, fontSize, fontColor, font, "bold", fontMargin);
     }
 
     /**
