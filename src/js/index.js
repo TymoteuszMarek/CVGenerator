@@ -50,7 +50,7 @@ function generate()
     let text = new HTMLText(
         pdfRect,
         doc,
-        `elbozo<h1>kysnegro</h1>2137<br>
+        `elbozo <h2>kysnegro</h2> 2137<br>
         i shall kill you fagot<br>
         top ten amogus<br>
         nope<br>
@@ -61,15 +61,15 @@ function generate()
 
 
 
-    pdfWrite.textColor = "white";
+    //pdfWrite.textColor = "white";
 
-    /**@type {Rect} */
-    let nameRect = new Rect(true, headerRect, 20, 15, 115, 50);
-    pdfWrite.drawRectOutline(nameRect, "red");
-    pdfWrite.WriteH1(name, nameRect);
-    pdfWrite.WriteH1(lastName, nameRect);
-    pdfWrite.fontSize = 21;
-    pdfWrite.Write(position, nameRect);
+    // /**@type {Rect} */
+    // let nameRect = new Rect(true, headerRect, 20, 15, 115, 50);
+    // pdfWrite.drawRectOutline(nameRect, "red");
+    // pdfWrite.WriteH1(name, nameRect);
+    // pdfWrite.WriteH1(lastName, nameRect);
+    // pdfWrite.fontSize = 21;
+    // pdfWrite.Write(position, nameRect);
 
     // pdfWrite.topMargin = 30;
     // pdfWrite.leftMargin = 110;
