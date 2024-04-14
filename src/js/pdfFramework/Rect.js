@@ -1,4 +1,9 @@
 import Mathf from "./Mathf";
+import FontData from "./FontData";
+import HTMLText from "./HTMLText";
+import jsPDF from "jspdf";
+import StyleData from "./StyleData";
+import PDFWrite from "./PDFWrite";
 
 export default class Rect
 {
@@ -10,32 +15,35 @@ export default class Rect
     #width = 0;
     /**@type {number} */
     #height = 0;
-    /**@type {Rect[]}*/
-    #children = [];
+
     /**@type {Rect}*/
     #parent;
     /**@type {boolean} */
     hasParent = true;
 
-    /**@type {number} */
-    topPadding = 0;
-    /**@type {number} */
-    leftPadding = 0;
-    /**@type {number} */
-    rightPadding = 0;
-    /**@type {number} */
-    downPadding = 0;
+    /**@type {jsPDF} */
+    doc;
+    /**@type {StyleData} */
+    styleData = new StyleData();
+    /**@type {FontData} */
+    fontData = new FontData();
+    /**@type {HTMLText} */
+    htmlText = new HTMLText();
     /**@type {number} */
     linesHeight = 0;
+    /**@type {number} */
+    textWidth = 0;
 
     /**
+     * @param {jsPDF} doc
      * @param {Rect} parent
      * @param {number} x 
      * @param {number} y 
      * @param {number} width 
      * @param {number} height 
      */
-    constructor(hasParent = true, parent = 0, x, y, width, height){
+    constructor(doc, hasParent = true, parent = 0, x, y, width, height){
+        this.doc = doc;
         this.hasParent = hasParent;
         this.setParent(parent);
         this.setX(x);
@@ -123,65 +131,74 @@ export default class Rect
      * @param {Rect} parent 
      */
     setParent(parent){
-        this.#parent = parent;
-    }
-    /**
-     * Adds child rect
-     * @param {Rect} child 
-     */
-    addChild(child){
-        this.#children.push(child);
-    }
-
-    /**
-     * Sets padding in all four dimentions
-     * @param {number} padding 
-     */
-    setPadding(padding){
-        this.topPadding = padding;
-        this.leftPadding = padding;
-        this.rightPadding = padding;
-        this.downPadding = padding;
-    }
-    /**
-     * Sets padding in x axis
-     * @param {number} padding 
-     */
-    setHorizontalPadding(padding){
-        this.leftPadding = padding;
-        this.rightPadding = padding;
-    }
-    /**
-     * Sets padding in y axis
-     * @param {number} padding 
-     */
-    setVericalPadding(padding){
-        this.topPadding = padding;
-        this.downPadding = padding;
+        if (this.hasParent){
+            this.#parent = parent;
+            this.styleData = StyleData.clone(parent.styleData);
+            this.fontData = FontData.clone(parent.fontData);
+        }
     }
 
     /**
      * Returns rect's width that's awailable to write
      */
     getWritingWidth(){
-        return this.#width + this.leftPadding + this.rightPadding;
+        return this.#width + this.styleData.leftPadding + this.styleData.rightPadding;
     }
     /**
      * Returns rect's height that's awailable to write
      */
     getWritingHeight(){
-        return this.#height + this.topPadding + this.downPadding;
+        return this.#height + this.styleData.topPadding + this.styleData.downPadding;
     }
     /**
      * Returns rect's x that's suitable for writing
      */
     getWritingX(){
-        return this.#x + this.leftPadding;
+        return this.#x + this.styleData.leftPadding + this.textWidth;
     }
     /**
      * Returns rect's y that's suitable for writing
      */
     getWritingY(){
-        return this.#y + this.topPadding + this.linesHeight;
+        return this.#y + this.styleData.topPadding + this.linesHeight;
+    }
+
+    /**
+     * Sets the content of rect
+     * @param {HTMLText} htmlText 
+     */
+    setHTMLText(htmlText){
+        htmlText.setDoc(this.doc);
+        htmlText.setRect(this);
+        this.htmlText = htmlText;
+    }
+
+    getLineHeight(){
+        return this.fontData.fontSize * 25.4 / 96 + 1;
+    }
+    /**
+     * Calculates lines value considering the font margin property
+     * @param {number} amount 
+     * @returns height in px
+     */
+    getLinesHeight(amount){
+        return ((this.fontData.fontSize * amount) + (this.fontData.fontMargin * amount - 1)) * 25.4 / 96 + 1;
+    }
+
+    /**
+     * Draws rect onto the doc - order of calling is crucial
+     */
+    draw(){
+        /**@type {PDFWrite} */
+        let pdfWrite = new PDFWrite(this.doc);
+
+        pdfWrite.drawRect(this, this.styleData.backgroundColor);
+        if (this.styleData.border)
+        {
+            let border = this.styleData.getBorderObject()
+            pdfWrite.drawRectOutline(this, border.color);
+        }
+
+        this.htmlText.writeText();
     }
 }

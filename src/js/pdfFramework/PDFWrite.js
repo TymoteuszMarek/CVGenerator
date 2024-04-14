@@ -10,7 +10,7 @@ export default class PDFWrite
     /**@type {string} */
     static defaultFontColor = "black";
     /**@type {string} */
-    static defaultFontStyle = "bold";
+    static defaultFontStyle = "";
     /**@type {number} */
     static defaultFontMargin = 3;
     /**@type {number} */
@@ -31,8 +31,9 @@ export default class PDFWrite
      * @param {string} text
      * @param {Rect} rect used for structuring the content of the document
      * @param {FontData} fontData
+     * @param {boolean} createNewLine
      */
-    Write(text, rect, fontData)
+    Write(text, rect, fontData, createNewLine = true)
     {
         let textLines = this.doc.setFont(fontData.font, fontData.fontStyle).setFontSize(fontData.fontSize).splitTextToSize(text, rect.getWritingWidth());
         this.doc.setTextColor(fontData.fontColor);
@@ -40,7 +41,15 @@ export default class PDFWrite
         textLines.forEach(line => 
         {
             this.doc.text(line, rect.getWritingX(), rect.getWritingY() + (fontData.fontSize * 25.4 / 96));
-            rect.linesHeight += fontData.fontSize * 0.25 + fontData.fontMargin;
+            if (createNewLine) 
+            {
+                rect.linesHeight += fontData.fontSize * 0.25 + fontData.fontMargin;
+                rect.textWidth = 0;
+            }
+            else
+            {
+                rect.textWidth += this.doc.getTextWidth(text);
+            }
         });
     }
     /**
@@ -49,8 +58,9 @@ export default class PDFWrite
      * @param {Rect} rect used for structuring the content of the document
      * @param {string} hType heading tag (/h1, /h2, ..., /h6)
      * @param {FontData} fontData
+     * @param {boolean} createNewLine
      */
-    WriteH(text, rect, hType, fontData)
+    WriteH(text, rect, hType, fontData, createNewLine = true)
     {
         const hTypes = {
             "/h1": new FontData(48, fontData.fontColor, fontData.font, "bold", fontData.fontMargin),
@@ -61,7 +71,7 @@ export default class PDFWrite
             "/h6": new FontData(12, fontData.fontColor, fontData.font, "bold", fontData.fontMargin)
         };
 
-        this.Write(text, rect, hTypes[hType]);
+        this.Write(text, rect, hTypes[hType], createNewLine);
     }
 
     /**

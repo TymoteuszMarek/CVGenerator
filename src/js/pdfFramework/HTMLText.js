@@ -1,6 +1,7 @@
 import jsPDF from "jspdf";
 import PDFWrite from "./PDFWrite";
 import FontData from "./FontData";
+import Rect from "./Rect";
 
 export default class HTMLText
 {
@@ -20,23 +21,41 @@ export default class HTMLText
      * @param {jsPDF} doc
      * @param {string} text
      */
-    constructor(rect, doc, text)
+    constructor(text = "")
     {
-        this.rect = rect;
-        this.doc = doc;
         this.text = text;
+    }
+
+    /**
+     * Setting jsDoc is required for HTMLText to work!
+     * @param {jsPDF} doc 
+     */
+    setDoc(doc){
+        this.doc = doc;
         this.#pdfWrite = new PDFWrite(this.doc);
     }
+    /**
+     * Setting rect is required for HTMLText to work!
+     * @param {Rect} rect 
+     */
+    setRect(rect){
+        this.rect = rect;
+    }
+
 
     /**
      * Writes text into doc considering the specified HTML tags
      */
     writeText()
     {
+        if (!this.text) return;
+
         let lines = this.text.split("<br>");
+        console.log(lines);
+
         lines.forEach(line => 
         {
-            line = line.trim();
+            line = this.#clearLine(line);
             console.log(line);
 
             for(let i = 0; i < line.length; i++){
@@ -58,11 +77,13 @@ export default class HTMLText
                         switch(tag){
 
                             case tag.match(/^\/h\d$/)?.input: // /h{number}
-                                this.#handleH(this.#currentText, tag, new FontData());
+                                this.#handleH(this.#currentText, tag);
                                 break;
 
                             case tag.match(/^h\d$/)?.input: // h{number}
-                                this.#handleText(this.#currentText, new FontData());
+                                if (!this.#currentText.match(/^\s+$/)?.input){
+                                    this.#handleText(this.#currentText);
+                                }
                                 break;
 
                             // case tag.match(/^h\d$/)?.input: // h{number}
@@ -78,31 +99,43 @@ export default class HTMLText
                 }
             }
 
-            if(this.#currentText)
+            if(this.#currentText && !this.#currentText.match(/^\s+$/)?.input)
             {
-                this.#handleText(this.#currentText, new FontData());
+                this.#handleText(this.#currentText);
             }
         });
     }
+
+    /**
+     * Clears string out of double whitespaces and tabulators
+     * @param {string} text 
+     */
+    #clearLine(text){
+        console.log(`clear: ${text}`);
+        let trimmed = text.replace(/\n+/g, "");
+        trimmed = trimmed.replace(/\s{2,}/g, "");
+        return trimmed;
+    }
+
     /**
      * @param {string} text
      * @param {string} hType heading tag (/h1, /h2, ..., /h6)
-     * @param {FontColor} fontData 
+     * @param {boolean} createNewLine
      */
-    #handleH(text, hType, fontData)
+    #handleH(text, hType, createNewLine = true)
     {
-        console.log(`write: text: ${text}, tag: ${hType}, ${fontData.toString()}`);
-        this.#pdfWrite.WriteH(text, this.rect, hType, fontData);
+        console.log(`write: text: ${text}, tag: ${hType}, ${this.rect.fontData.toString()}`);
+        this.#pdfWrite.WriteH(text, this.rect, hType, this.rect.fontData, createNewLine);
         this.#currentText = "";
     }
     /**
-     * @param {string} text 
-     * @param {FontData} fontData 
+     * @param {string} text
+     * @param {boolean} createNewLine
      */
-    #handleText(text, fontData)
+    #handleText(text, createNewLine = true)
     {
-        console.log(`write: text: ${text}, tag: none, ${fontData.toString()}`);
-        this.#pdfWrite.Write(text, this.rect, fontData);
+        console.log(`write: text: ${text}, tag: none, ${this.rect.fontData.toString()}`);
+        this.#pdfWrite.Write(text, this.rect, this.rect.fontData, createNewLine);
         this.#currentText = "";
     }
 }
