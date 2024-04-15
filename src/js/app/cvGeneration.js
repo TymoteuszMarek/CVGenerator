@@ -1,5 +1,4 @@
 import { ShadingPattern, TilingPattern, jsPDF } from "jspdf";
-import PDFWrite from "../pdfFramework/PDFWrite";
 import Rect from "../pdfFramework/Rect";
 import HTMLText from "../pdfFramework/HTMLText";
 import CVExample from "./CVExample";
@@ -36,7 +35,6 @@ function generate()
     let email = "tymekmarek2@gmail.com";
     address = "ul. Sokola 10, Ceradz Koscielny";
     position = "Senior Developer";
-    content = "kys negro";
     aboutMyself = `Lorem ipsum dolor sit, amet consectetur adipisicing elit. Tempora odit ducimus aut. Delectus, quam officia dicta reiciendis corporis voluptatibus molestiae possimus sequi. Exercitationem unde explicabo amet quae veniam facere nihil.
     Quia, illo eius. Provident, recusandae ut nisi dolore, esse voluptatibus.`;
     /**@type {CVExample[]} */
