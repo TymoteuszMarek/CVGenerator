@@ -37,8 +37,8 @@ export default class Rect
     /**
      * @param {jsPDF} doc
      * @param {Rect} parent
-     * @param {number} x 
-     * @param {number} y 
+     * @param {number} x relative to parent
+     * @param {number} y relative to parent
      * @param {number} width 
      * @param {number} height 
      */
@@ -53,7 +53,7 @@ export default class Rect
     }
 
     /**
-     * Sets x component considering parent's parameters
+     * Sets x component relative to parent
      * @param {number} x 
      */
     setX(x){
@@ -63,17 +63,28 @@ export default class Rect
             return;
         }
 
-        let minX = this.#parent.getX();
-        let maxX = this.#parent.getX() + this.#parent.getWidth(); 
+        let minX = 0;
+        let maxX = this.#parent.getWidth(); 
         this.#x = Mathf.clamp(minX, maxX, x);
     }
+    /**
+     * Returns x coordinate relative to parent
+     */
     getX(){
         return this.#x;
     }
+    /**
+     * Calculates x coordinate relative to the document
+     */
+    getDocumentX(){
+        if (!this.hasParent) return this.#x;
+
+        return this.#x + this.#parent.getDocumentX();
+    }
 
     /**
-     * Sets y component considering parent's parameters
-     * @param {numbber} y
+     * Sets y component relative to parent
+     * @param {number} y
      */
     setY(y){
         if (!this.hasParent)
@@ -82,12 +93,20 @@ export default class Rect
             return;
         }
 
-        let minY = this.#parent.getY();
-        let maxY = this.#parent.getY() + this.#parent.getWidth(); 
+        let minY = 0;
+        let maxY = this.#parent.getHeight(); 
         this.#y = Mathf.clamp(minY, maxY, y);
     }
     getY(){
         return this.#y;
+    }
+    /**
+     * Calculates x coordinate relative to the document
+     */
+    getDocumentY(){
+        if (!this.hasParent) return this.#y;
+        let result = this.#y + this.#parent.getDocumentY();
+        return result
     }
 
     /**
@@ -101,7 +120,7 @@ export default class Rect
             return;
         }
 
-        let maxWidth = this.#parent.getX() + this.#parent.getWidth() - this.#x; 
+        let maxWidth = this.#parent.getWidth() - this.#x;
         this.#width = Mathf.clamp(0, maxWidth, width);
     }
     getWidth(){
@@ -119,7 +138,7 @@ export default class Rect
             return;
         }
 
-        let maxHeight = this.#parent.getY() + this.#parent.getHeight() - this.#y;
+        let maxHeight = this.#parent.getHeight() - this.#y;
         this.#height = Mathf.clamp(0, maxHeight, height);
     }
     getHeight(){
@@ -154,13 +173,13 @@ export default class Rect
      * Returns rect's x that's suitable for writing
      */
     getWritingX(){
-        return this.#x + this.styleData.leftPadding + this.textWidth;
+        return this.getDocumentX() + this.styleData.leftPadding + this.textWidth;
     }
     /**
      * Returns rect's y that's suitable for writing
      */
     getWritingY(){
-        return this.#y + this.styleData.topPadding + this.linesHeight;
+        return this.getDocumentY() + this.styleData.topPadding + this.linesHeight;
     }
 
     /**

@@ -13,3 +13,10 @@ main{
 #LastName{
     width: 30%;
 }
+[id^="formDiv"]{
+    display: flex;
+    flex-direction: column;
+}
+[id^="formDiv"] :not(textarea){
+    width: 30%;
+}

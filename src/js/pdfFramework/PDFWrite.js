@@ -64,11 +64,11 @@ export default class PDFWrite
     {
         const hTypes = {
             "/h1": new FontData(48, fontData.fontColor, fontData.font, "bold", fontData.fontMargin),
-            "/h2": new FontData(42, fontData.fontColor, fontData.font, "bold", fontData.fontMargin),
+            "/h2": new FontData(41, fontData.fontColor, fontData.font, "bold", fontData.fontMargin),
             "/h3": new FontData(34, fontData.fontColor, fontData.font, "bold", fontData.fontMargin),
-            "/h4": new FontData(26, fontData.fontColor, fontData.font, "bold", fontData.fontMargin),
-            "/h5": new FontData(18, fontData.fontColor, fontData.font, "bold", fontData.fontMargin),
-            "/h6": new FontData(12, fontData.fontColor, fontData.font, "bold", fontData.fontMargin)
+            "/h4": new FontData(27, fontData.fontColor, fontData.font, "bold", fontData.fontMargin),
+            "/h5": new FontData(20, fontData.fontColor, fontData.font, "bold", fontData.fontMargin),
+            "/h6": new FontData(13, fontData.fontColor, fontData.font, "bold", fontData.fontMargin)
         };
 
         this.Write(text, rect, hTypes[hType], createNewLine);
@@ -82,7 +82,7 @@ export default class PDFWrite
     drawRect(rect, color)
     {
         this.doc.setFillColor(color);
-        this.doc.rect(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight(), "f");
+        this.doc.rect(rect.getDocumentX(), rect.getDocumentY(), rect.getWidth(), rect.getHeight(), "f");
     }
     /**
      * Draws filled rect
@@ -92,6 +92,6 @@ export default class PDFWrite
     drawRectOutline(rect, color)
     {
         this.doc.setDrawColor(color);
-        this.doc.rect(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight());
+        this.doc.rect(rect.getDocumentX(), rect.getDocumentY(), rect.getWidth(), rect.getHeight());
     }
 }

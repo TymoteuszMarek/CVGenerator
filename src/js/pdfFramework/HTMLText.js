@@ -104,6 +104,8 @@ export default class HTMLText
                 this.#handleText(this.#currentText);
             }
         });
+
+        this.rect.linesHeight = this.rect.styleData.topPadding;
     }
 
     /**
